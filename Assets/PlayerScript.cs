@@ -13,22 +13,8 @@ public class PlayerScript : MonoBehaviour
     private Vector2 lastMousePosition;
     private bool isRotating = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void processPlayerMovement()
     {
-        playerRigidBody = GetComponent<Rigidbody>();
-        playerRigidBody.freezeRotation = true;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        processPlayerMovement();
-        processCameraRotation();
-        processPlayerJump();
-    }
-
-    void processPlayerMovement() {
         Vector3 direction = Vector3.zero;
 
         if (Keyboard.current.wKey.isPressed) {
@@ -47,11 +33,23 @@ public class PlayerScript : MonoBehaviour
         if (direction != Vector3.zero)
         {
             direction.Normalize();
+            direction = GetProjectedMovement(direction);
             transform.position += direction * playerSpeed * Time.deltaTime;
         }
     }
 
-    void processCameraRotation() {
+    Vector3 GetProjectedMovement(Vector3 direction)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit))
+        {
+            return Vector3.ProjectOnPlane(direction, hit.normal);
+        }
+        return direction;
+    }
+
+    void processCameraRotation() 
+    {
         if (Mouse.current.rightButton.isPressed)
         {
             if (!isRotating)
@@ -75,7 +73,8 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    void processPlayerJump() {
+    void processPlayerJump() 
+    {
         if (Keyboard.current.spaceKey.wasPressedThisFrame && playerIsGrounded())
         {
             playerRigidBody.AddForce(Vector3.up * playerJumpForce, ForceMode.Impulse);
@@ -85,6 +84,21 @@ public class PlayerScript : MonoBehaviour
     bool playerIsGrounded()
     {
         return Physics.Raycast(transform.position, Vector3.down, 1.1f);
+    }
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        playerRigidBody = GetComponent<Rigidbody>();
+        playerRigidBody.freezeRotation = true;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        processPlayerMovement();
+        processCameraRotation();
+        processPlayerJump();
     }
     
 }
