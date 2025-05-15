@@ -67,7 +67,6 @@ public class PlayerScript : MonoBehaviour
     void processCameraRotation() 
     {
         bool isZoomedIn = playerCamera.localPosition.z >= maxZoom;
-        Cursor.visible = !isZoomedIn; 
         if (isZoomedIn || Mouse.current.rightButton.isPressed)
         {
             if (!isRotating)
@@ -127,6 +126,7 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Cursor.visible = false; 
         playerRigidBody = GetComponent<Rigidbody>();
         playerRigidBody.freezeRotation = true;
     }
