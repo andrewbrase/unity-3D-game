@@ -66,22 +66,30 @@ public class PlayerScript : MonoBehaviour
 
     void processCameraRotation() 
     {
-        if (Mouse.current.rightButton.isPressed)
+        bool isZoomedIn = playerCamera.localPosition.z >= maxZoom;
+        Cursor.visible = !isZoomedIn; 
+        if (isZoomedIn || Mouse.current.rightButton.isPressed)
         {
             if (!isRotating)
             {
                 isRotating = true;
                 lastMousePosition = Mouse.current.position.ReadValue();
             }
-
-            Vector2 delta = Mouse.current.position.ReadValue() - lastMousePosition;
-            lastMousePosition = Mouse.current.position.ReadValue();
-
+            Vector2 currentMousePosition = Mouse.current.position.ReadValue();
+            Vector2 screenSize = new Vector2(Screen.width, Screen.height);
+            Vector2 delta = currentMousePosition - lastMousePosition;
+            lastMousePosition = currentMousePosition;
             float rotationX = delta.y * playerRotationSpeed * Time.deltaTime;
             float rotationY = delta.x * playerRotationSpeed * Time.deltaTime;
-
             playerCamera.Rotate(Vector3.right, -rotationX);
             transform.Rotate(Vector3.up, rotationY);
+            float edgeThreshold = 5f;
+            if (currentMousePosition.x <= edgeThreshold || currentMousePosition.x >= screenSize.x - edgeThreshold ||
+                currentMousePosition.y <= edgeThreshold || currentMousePosition.y >= screenSize.y - edgeThreshold)
+            {
+                Mouse.current.WarpCursorPosition(new Vector2(screenSize.x / 2, screenSize.y / 2));
+                lastMousePosition = new Vector2(screenSize.x / 2, screenSize.y / 2);
+            }
         }
         else
         {
