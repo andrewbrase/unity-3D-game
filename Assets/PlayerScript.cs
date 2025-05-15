@@ -4,9 +4,9 @@ using UnityEngine.InputSystem;
 public class PlayerScript : MonoBehaviour
 {
 
-    public float playerSpeed = 10f;
+    public float playerSpeed = 5f;
     public float playerRotationSpeed = 50f;
-    public float playerJumpForce = 10f;
+    public float playerJumpForce = 5f;
     public Transform playerCamera;
 
     private Rigidbody playerRigidBody;
@@ -15,19 +15,32 @@ public class PlayerScript : MonoBehaviour
 
     void processPlayerMovement()
     {
+        
         Vector3 direction = Vector3.zero;
 
         if (Keyboard.current.wKey.isPressed) {
             direction += playerCamera.forward;
         }
-        if(Keyboard.current.dKey.isPressed) {
+        if (Keyboard.current.dKey.isPressed) {
             direction += playerCamera.right;
         }
-        if(Keyboard.current.aKey.isPressed) {
+        if (Keyboard.current.aKey.isPressed) {
             direction += -playerCamera.right;
         }
-        if(Keyboard.current.sKey.isPressed) {
+        if (Keyboard.current.sKey.isPressed) {
             direction += -playerCamera.forward;
+        }
+
+        if (playerIsGrounded())
+        {
+            if (Keyboard.current.leftShiftKey.isPressed) 
+            {
+                playerSpeed = 8f;
+            }
+            else
+            {
+                playerSpeed = 5f;
+            }
         }
 
         if (direction != Vector3.zero)
