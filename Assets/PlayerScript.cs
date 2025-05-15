@@ -8,6 +8,9 @@ public class PlayerScript : MonoBehaviour
     public float playerRotationSpeed = 50f;
     public float playerJumpForce = 5f;
     public Transform playerCamera;
+    public float zoomSpeed = 0.1f;
+    public float minZoom = -7f;
+    public float maxZoom = 0f;
 
     private Rigidbody playerRigidBody;
     private Vector2 lastMousePosition;
@@ -86,6 +89,20 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    void processCameraZoom() 
+    {
+        float scrollInput = Mouse.current.scroll.ReadValue().y;
+
+        if (scrollInput != 0) 
+        {
+            Vector3 newPosition = playerCamera.localPosition;
+            newPosition.z += scrollInput * zoomSpeed * Time.deltaTime;
+            newPosition.z = Mathf.Clamp(newPosition.z, minZoom, maxZoom);
+
+            playerCamera.localPosition = newPosition;
+        }
+    }
+
     void processPlayerJump() 
     {
         if (Keyboard.current.spaceKey.wasPressedThisFrame && playerIsGrounded())
@@ -111,6 +128,7 @@ public class PlayerScript : MonoBehaviour
     {
         processPlayerMovement();
         processCameraRotation();
+        processCameraZoom();
         processPlayerJump();
     }
     
