@@ -18,21 +18,21 @@ public class PlayerScript : MonoBehaviour
         
         Vector3 direction = Vector3.zero;
 
-        if (Keyboard.current.wKey.isPressed) {
-            direction += playerCamera.forward;
-        }
-        if (Keyboard.current.dKey.isPressed) {
-            direction += playerCamera.right;
-        }
-        if (Keyboard.current.aKey.isPressed) {
-            direction += -playerCamera.right;
-        }
-        if (Keyboard.current.sKey.isPressed) {
-            direction += -playerCamera.forward;
-        }
-
         if (playerIsGrounded())
         {
+            if (Keyboard.current.wKey.isPressed) {
+            direction += playerCamera.forward;
+            }
+            if (Keyboard.current.dKey.isPressed) {
+                direction += playerCamera.right;
+            }
+            if (Keyboard.current.aKey.isPressed) {
+                direction += -playerCamera.right;
+            }
+            if (Keyboard.current.sKey.isPressed) {
+                direction += -playerCamera.forward;
+            }
+
             if (Keyboard.current.leftShiftKey.isPressed) 
             {
                 playerSpeed = 8f;
@@ -46,12 +46,12 @@ public class PlayerScript : MonoBehaviour
         if (direction != Vector3.zero)
         {
             direction.Normalize();
-            direction = GetProjectedMovement(direction);
-            transform.position += direction * playerSpeed * Time.deltaTime;
+            direction = getProjectedMovement(direction);
+            playerRigidBody.linearVelocity = new Vector3(direction.x * playerSpeed, playerRigidBody.linearVelocity.y, direction.z * playerSpeed);
         }
     }
 
-    Vector3 GetProjectedMovement(Vector3 direction)
+    Vector3 getProjectedMovement(Vector3 direction)
     {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, Vector3.down, out hit))
